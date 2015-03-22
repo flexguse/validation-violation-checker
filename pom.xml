@@ -74,4 +74,13 @@
 		<name>flexguse</name>
 		<url>http://www.flexguse.de</url>
 	</organization>
+	<issueManagement>
+		<url>https://github.com/flexguse/validation-violation-checker/issues</url>
+		<system>GitHub</system>
+	</issueManagement>
+	<scm>
+		<url>scm:git:git:github.com/flexguse/validation-violation-checker</url>
+		<connection>scm:git:git@github.com:flexguse/validation-violation-checker.git</connection>
+		<developerConnection>scm:git:git@github.com:flexguse/validation-violation-checker.git</developerConnection>
+	</scm>
 </project>
