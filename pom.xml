@@ -35,7 +35,7 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-			
+
 			<!-- plugin for adding License -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -65,9 +65,41 @@
 				<executions>
 					<execution>
 						<id>attach-sources</id>
-						<phase>verify</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- plugin for adding Javadoc jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.2</version>
+				<executions>
+					<execution>
+						<id>javadoc</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- plugin for signing jars -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -160,4 +192,22 @@
 		<connection>scm:git:git@github.com:flexguse/validation-violation-checker.git</connection>
 		<developerConnection>scm:git:git@github.com:flexguse/validation-violation-checker.git</developerConnection>
 	</scm>
+	<developers>
+		<developer>
+			<email>info@flexguse.de</email>
+			<organization>flexguse</organization>
+			<organizationUrl>http://www.flexguse.de</organizationUrl>
+			<name>Christoph Guse</name>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<url>https://github.com/flexguse/validation-violation-checker</url>
+
 </project>
