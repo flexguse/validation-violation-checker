@@ -20,7 +20,7 @@ In case you use Maven just add the dependencies
 	<dependency>
 		<groupId>de.flexguse.util.junit</groupId>
 		<artifactId>validation-violation-checker</artifactId>
-		<version>0.1</version>
+		<version>0.2</version>
 		<scope>test</scope>
 	</dependency>
 
