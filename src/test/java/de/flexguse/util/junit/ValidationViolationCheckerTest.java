@@ -49,18 +49,16 @@ import org.junit.Test;
  */
 public class ValidationViolationCheckerTest {
 
-	private ValidationViolationChecker<String> checker = new ValidationViolationChecker<String>();
-
 	/**
 	 * Tests if null input is handled correctly and does not cause an exception.
 	 */
 	@Test
 	public void testNullInput() {
 
-		checker.checkExpectedValidationViolations(null, null);
-		checker.checkExpectedValidationViolations(
-				new HashSet<ConstraintViolation<String>>(), null);
-		checker.checkExpectedValidationViolations(null, new ArrayList<String>());
+	    ValidationViolationChecker.checkExpectedValidationViolations(null, null);
+	    ValidationViolationChecker.checkExpectedValidationViolations(
+				new HashSet<ConstraintViolation<?>>(), null);
+	    ValidationViolationChecker.checkExpectedValidationViolations(null, new ArrayList<String>());
 
 	}
 
@@ -72,8 +70,8 @@ public class ValidationViolationCheckerTest {
 	public void testDifferentSizes() {
 
 		try {
-			checker.checkExpectedValidationViolations(
-					new HashSet<ConstraintViolation<String>>(),
+		    ValidationViolationChecker.checkExpectedValidationViolations(
+					new HashSet<ConstraintViolation<?>>(),
 					Arrays.asList("error 1", "error 2"));
 			fail("assertionError expected");
 		} catch (AssertionError e) {
@@ -97,7 +95,7 @@ public class ValidationViolationCheckerTest {
 		List<String> expectedViolations = Arrays.asList("error 1", "error 2");
 
 		// create set containing mocked ConstraintViolations
-		Set<ConstraintViolation<String>> violations = new HashSet<ConstraintViolation<String>>();
+		Set<ConstraintViolation<?>> violations = new HashSet<ConstraintViolation<?>>();
 
 		ConstraintViolation<String> mock1 = mock(ConstraintViolation.class);
 		when(mock1.getMessageTemplate()).thenReturn("error 1");
@@ -108,7 +106,7 @@ public class ValidationViolationCheckerTest {
 		violations.add(mock2);
 
 		try {
-			checker.checkExpectedValidationViolations(violations,
+		    ValidationViolationChecker.checkExpectedValidationViolations(violations,
 					expectedViolations);
 			fail("assertionError expected");
 		} catch (AssertionError e) {
@@ -144,7 +142,7 @@ public class ValidationViolationCheckerTest {
 		List<String> expectedViolations = Arrays.asList("error 1", "error 2");
 
 		// create set containing mocked ConstraintViolations
-		Set<ConstraintViolation<String>> violations = new HashSet<ConstraintViolation<String>>();
+		Set<ConstraintViolation<?>> violations = new HashSet<ConstraintViolation<?>>();
 
 		ConstraintViolation<String> mock1 = mock(ConstraintViolation.class);
 		when(mock1.getMessageTemplate()).thenReturn("error 1");
@@ -154,7 +152,7 @@ public class ValidationViolationCheckerTest {
 		when(mock2.getMessageTemplate()).thenReturn("error 2");
 		violations.add(mock2);
 
-		checker.checkExpectedValidationViolations(violations,
+		ValidationViolationChecker.checkExpectedValidationViolations(violations,
 				expectedViolations);
 	}
 

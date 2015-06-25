@@ -29,11 +29,7 @@ In case you use Maven just add the dependencies
 to your Maven dependencies. All required dependencies are added automatically to your project.
 
 ## ValidationViolationChecker
-Using the validation-violation-checker is quite easy. Just create a new Instance using the type of your bean you want to validate.
-
-```java
-	ValidationViolationChecker<RemoteSite> checker = new ValidationViolationChecker<>()
-```
+Using the validation-violation-checker is quite easy.
 
 Do your Java JSR303 BeanValdation, i.e.
 
@@ -45,7 +41,7 @@ Do your Java JSR303 BeanValdation, i.e.
 and check if the violations contain the validation errors you expected
 
 ```java
-		violationChecker.checkExpectedValidationViolations(violations, Arrays
+		ValidationViolationChecker.checkExpectedValidationViolations(violations, Arrays
 				.asList("error 1", "error 2", "error 3"));
 ```
 
@@ -55,7 +51,7 @@ The ValidationViolationChecker uses internally the Junit Assert methods, so call
 If you use resource bundles to make your validation errors multilanguage this is absolutely no problem for ValidationViolationChecker because internally the validation template is used. Just use the curly bracket expression as expected validation violation, i.e.
 
 ```java
-		violationChecker.checkExpectedValidationViolations(violations, Arrays
+		ValidationViolationChecker.checkExpectedValidationViolations(violations, Arrays
 				.asList("{error.1}", "{error.2}", "{error.3}"));
 ```
 
