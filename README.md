@@ -29,7 +29,29 @@ In case you use Maven just add the dependencies
 to your Maven dependencies. All required dependencies are added automatically to your project.
 
 ## ValidationViolationChecker
-Using the validation-violation-checker is quite easy.
+Using the validation-violation-checker is quite easy. There is a static method for checking ConstraintViolationExceptions and a public checking method for checking a set of ConstraintViolations.
+
+### Using the static method
+Do something like method validation and catch the exception, i.e.
+
+```java
+		try{
+			userService.saveUser(user);
+		}catch(ConstraintViolationException e){
+				ValidationViolationChecker.checkExpectedValidationViolations(e,
+					Arrays.asList(UserErrorMessages.NO_EMAIL,
+							UserErrorMessages.NO_LOGIN,
+							UserErrorMessages.NO_PASSWORD));
+		}
+```
+
+
+### Using public method 
+Create an instance of ValidationViolationChecker, i.e.
+
+```java
+		private ValidationViolationChecker<User> checker = new ValidationViolationChecker<>();
+```
 
 Do your Java JSR303 BeanValdation, i.e.
 
@@ -41,7 +63,7 @@ Do your Java JSR303 BeanValdation, i.e.
 and check if the violations contain the validation errors you expected
 
 ```java
-		ValidationViolationChecker.checkExpectedValidationViolations(violations, Arrays
+		checker.checkExpectedValidationViolations(violations, Arrays
 				.asList("error 1", "error 2", "error 3"));
 ```
 
@@ -63,3 +85,11 @@ mvn clean install
 ```
 
 should do the job.
+
+If a new release needs to be built and released in the Maven central repository, just run
+
+```bash
+mvn clean install -P release-build
+```
+
+and a new PGP signed jar is created.

@@ -25,7 +25,6 @@ package de.flexguse.util.junit;
  * #L%
  */
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -38,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.junit.Test;
 
@@ -49,17 +49,39 @@ import org.junit.Test;
  */
 public class ValidationViolationCheckerTest {
 
+	private ValidationViolationChecker<String> checker = new ValidationViolationChecker<String>();
+
 	/**
 	 * Tests if null input is handled correctly and does not cause an exception.
 	 */
 	@Test
-	public void testNullInput() {
+	public void testNullInputExceptionCheck() {
 
-	    ValidationViolationChecker.checkExpectedValidationViolations(null, null);
-	    ValidationViolationChecker.checkExpectedValidationViolations(
-				new HashSet<ConstraintViolation<?>>(), null);
-	    ValidationViolationChecker.checkExpectedValidationViolations(null, new ArrayList<String>());
+		ValidationViolationChecker.checkExpectedValidationViolations(
+				(ConstraintViolationException) null, null);
+		ValidationViolationChecker.checkExpectedValidationViolations(
+				(ConstraintViolationException) null, new ArrayList<String>());
 
+		ConstraintViolationException exception = mock(ConstraintViolationException.class);
+		when(exception.getConstraintViolations()).thenReturn(
+				new HashSet<ConstraintViolation<?>>());
+		ValidationViolationChecker.checkExpectedValidationViolations(exception,
+				null);
+
+	}
+
+	/**
+	 * Tests if null input for non-static checking method is handled correctly.
+	 */
+	@Test
+	public void testNullInputViolationsCheck() {
+		checker.checkExpectedValidationViolations(
+				(Set<ConstraintViolation<String>>) null, null);
+		checker.checkExpectedValidationViolations(
+				new HashSet<ConstraintViolation<String>>(), null);
+		checker.checkExpectedValidationViolations(
+				(Set<ConstraintViolation<String>>) null,
+				new ArrayList<String>());
 	}
 
 	/**
@@ -70,8 +92,8 @@ public class ValidationViolationCheckerTest {
 	public void testDifferentSizes() {
 
 		try {
-		    ValidationViolationChecker.checkExpectedValidationViolations(
-					new HashSet<ConstraintViolation<?>>(),
+			checker.checkExpectedValidationViolations(
+					new HashSet<ConstraintViolation<String>>(),
 					Arrays.asList("error 1", "error 2"));
 			fail("assertionError expected");
 		} catch (AssertionError e) {
@@ -95,7 +117,7 @@ public class ValidationViolationCheckerTest {
 		List<String> expectedViolations = Arrays.asList("error 1", "error 2");
 
 		// create set containing mocked ConstraintViolations
-		Set<ConstraintViolation<?>> violations = new HashSet<ConstraintViolation<?>>();
+		Set<ConstraintViolation<String>> violations = new HashSet<ConstraintViolation<String>>();
 
 		ConstraintViolation<String> mock1 = mock(ConstraintViolation.class);
 		when(mock1.getMessageTemplate()).thenReturn("error 1");
@@ -106,13 +128,14 @@ public class ValidationViolationCheckerTest {
 		violations.add(mock2);
 
 		try {
-		    ValidationViolationChecker.checkExpectedValidationViolations(violations,
+			checker.checkExpectedValidationViolations(violations,
 					expectedViolations);
 			fail("assertionError expected");
 		} catch (AssertionError e) {
 
 			/*
-			 * As the used HashSet is not sorted one of the expected AssertionErrors must be given.
+			 * As the used HashSet is not sorted one of the expected
+			 * AssertionErrors must be given.
 			 */
 			try {
 				assertEquals(
@@ -142,7 +165,7 @@ public class ValidationViolationCheckerTest {
 		List<String> expectedViolations = Arrays.asList("error 1", "error 2");
 
 		// create set containing mocked ConstraintViolations
-		Set<ConstraintViolation<?>> violations = new HashSet<ConstraintViolation<?>>();
+		Set<ConstraintViolation<String>> violations = new HashSet<ConstraintViolation<String>>();
 
 		ConstraintViolation<String> mock1 = mock(ConstraintViolation.class);
 		when(mock1.getMessageTemplate()).thenReturn("error 1");
@@ -152,8 +175,68 @@ public class ValidationViolationCheckerTest {
 		when(mock2.getMessageTemplate()).thenReturn("error 2");
 		violations.add(mock2);
 
-		ValidationViolationChecker.checkExpectedValidationViolations(violations,
+		checker.checkExpectedValidationViolations(violations,
 				expectedViolations);
+	}
+
+	/**
+	 * Tests if validation is done correctly in case of no violations in the
+	 * {@link ConstraintViolationException}.
+	 */
+	@Test
+	public void testCheckingExceptionNullViolations() {
+
+		ConstraintViolationException exception1 = mock(ConstraintViolationException.class);
+		List<String> expectedExceptions = Arrays.asList("ex1", "ex2");
+
+		try {
+			ValidationViolationChecker.checkExpectedValidationViolations(
+					exception1, expectedExceptions);
+		} catch (AssertionError e) {
+			assertEquals(
+					"number of expected validation violations (ex1, ex2) does not match the number of given violations () expected:<2> but was:<0>",
+					e.getMessage());
+		}
+
+	}
+
+	/**
+	 * Tests if validation is done correctly for a
+	 * {@link ConstraintViolationException}.
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testCheckingException() {
+		
+		/*
+		 * mock ConstraintViolations
+		 */
+		Set<ConstraintViolation<?>> givenViolations = new HashSet<>();
+		
+		ConstraintViolation<String> violation1 = mock(ConstraintViolation.class);
+		when(violation1.getMessageTemplate()).thenReturn("ex1");
+		givenViolations.add(violation1);
+		
+		ConstraintViolation<String> violation2 = mock(ConstraintViolation.class);
+		when(violation2.getMessageTemplate()).thenReturn("ex2");
+		givenViolations.add(violation2);
+
+		/*
+		 * mock ConstraintViolationException
+		 */
+		ConstraintViolationException exception1 = mock(ConstraintViolationException.class);
+		when(exception1.getConstraintViolations()).thenReturn(givenViolations);
+		
+		
+		/*
+		 * do method call
+		 */
+		List<String> expectedExceptions = Arrays.asList("ex1", "ex2");
+		
+		ValidationViolationChecker.checkExpectedValidationViolations(
+				exception1, expectedExceptions);
+
+
 	}
 
 }
